@@ -1,4 +1,4 @@
-name: Keep Render Apps Awake
+name: keep render apps awake
 
 on:
   schedule:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Ping Safe Mom
         run: |
-          response=$(curl -s -w "%{http_code}" https://safe-mom-1.onrender.com/ping)
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://safe-mom-1.onrender.com/ping)
           if [ "$response" -eq 200 ]; then
             echo "Safe Mom ping successful"
           else
