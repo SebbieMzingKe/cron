@@ -2,7 +2,7 @@ name: keep render apps awake
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/15 * * * *"
 
 jobs:
   keep-awake:
