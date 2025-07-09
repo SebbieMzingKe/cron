@@ -31,17 +31,16 @@ jobs:
             exit 1
           fi
 
-
-      # - name: Notify on Failure
-      #   if: failure()
-      #   uses: actions/github-script@v7
-      #   with:
-      #     script: |
-      #       await github.rest.issues.create({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         title: 'Render App Ping Failure',
-      #         body: 'One or more pings to keep Render apps awake failed. Check the workflow logs for details.'
-      #       })
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Notify on Failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Render App Ping Failure',
+              body: 'One or more pings to keep Render apps awake failed. Check the workflow logs for details.'
+            })
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
