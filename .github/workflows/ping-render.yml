@@ -2,7 +2,7 @@ name: keep render apps awake
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/15 * * * *" # Every 15 minutes
 
 jobs:
   keep-awake:
@@ -11,34 +11,37 @@ jobs:
     steps:
       - name: Ping Chanzu Blog
         run: |
-          response=$(curl -s -w "%{http_code}" https://chanzublog.onrender.com/ping)
-          if [ "$response" -eq 200 ]; then
-            echo "Chanzu Blog ping successful"
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://chanzublog.onrender.com/ping)
+          echo "Chanzu Blog status: $status"
+          if [ "$status" -eq 200 ]; then
+            echo "✅ Chanzu Blog ping successful"
           else
-            echo "Chanzu Blog ping failed with HTTP status: $response"
+            echo "❌ Chanzu Blog ping failed with HTTP status: $status"
             exit 1
           fi
 
       - name: Ping Safe Mom
         run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" https://safe-mom-1.onrender.com/ping)
-          if [ "$response" -eq 200 ]; then
-            echo "Safe Mom ping successful"
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://safe-mom-1.onrender.com/ping)
+          echo "Safe Mom status: $status"
+          if [ "$status" -eq 200 ]; then
+            echo "✅ Safe Mom ping successful"
           else
-            echo "Safe Mom ping failed with HTTP status: $response"
+            echo "❌ Safe Mom ping failed with HTTP status: $status"
             exit 1
           fi
 
-      - name: Notify on Failure
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Render App Ping Failure',
-              body: 'One or more pings to keep Render apps awake failed. Check the workflow logs for details.'
-            })
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Notify on Failure
+      #   if: failure()
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       await github.rest.issues.create({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         title: 'Render App Ping Failure',
+      #         body: 'One or more pings to keep Render apps awake failed. Check the workflow logs for details.'
+      #       })
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
